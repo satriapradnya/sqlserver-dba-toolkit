@@ -1,15 +1,29 @@
 /* =============================================================
-   Script Name : 02_Performance_UnusedIndex_Analysis.sql
-   Category    : Performance Tuning - Index Analysis
-   Version     : 1.0
-   Author      : Satria Pradnya 
-   Created     : 14 February 2026 
-   Last Update : - 
-   Description :
-       Identifies non-clustered indexes that are not being used
-       (no seeks, scans, or lookups) but incur write overhead.
-       Excludes primary keys and unique constraints.
+   Script Name   : IDX_02_UnusedIndex_Analysis.sql
+   Category      : Performance Tuning - Index Analysis
+   Version       : 1.0
+   Author        : Satria Pradnya
+   Created       : 14 February 2026
+   Last Update   : -
+   Description   :
+        Identifies non-clustered indexes that are not being used
+        (no seeks, scans, or lookups) but still incur write overhead.
+        Excludes primary keys and unique constraints.
+
+    Note:
+        DMV data resets after SQL Server restart,
+        database detach/attach, or failover events.
+
+   Execution Type : Read-Only
+   Risk Level     : Low
+
+   Compatibility :
+       Minimum Version : SQL Server 2008
+       Tested Version  : SQL Server 2008, 2012, 2016, 2017, 2019, 2022
+       Azure Support   : Yes
+       Edition         : All Editions
    ============================================================= */
+
 
 SET NOCOUNT ON;
 
