@@ -1,24 +1,36 @@
 /* =============================================================
-   Script Name : 01_Performance_MissingIndex_Analysis.sql
-   Category    : Performance Tuning - Index Analysis
-   Version     : SQL Server 2012+
-   Author      : Satria Pradnya
-   Created     : 14 February 2026
-   Last Update : -
-   Description : 
+   Script Name   : IDX_01_MissingIndex_Analysis.sql
+   Category      : Performance Tuning - Index Analysis
+   Version       : 1.0
+   Author        : Satria Pradnya
+   Created       : 14 February 2026
+   Last Update   : -
+
+   Description   :
        Identifies top missing index recommendations based on
-       improvement_measure calculation from SQL Server DMVs.
+       improvement_measure calculation derived from SQL Server DMVs.
 
        improvement_measure =
-           avg_total_user_cost 
-           * avg_user_impact 
+           avg_total_user_cost
+           * avg_user_impact
            * (user_seeks + user_scans)
 
        Note:
-       - Data is cumulative since last SQL Server restart.
-       - Recommendations must be validated before implementation.
-   
+           - Data is cumulative since last SQL Server restart.
+           - Missing index DMVs may not represent full workload.
+           - Recommendations are optimizer-based estimates.
+           - Results require manual validation before implementation.
+
+   Execution Type : Read-Only
+   Risk Level     : Low
+
+   Compatibility :
+       Minimum Version : SQL Server 2012
+       Tested Version  : SQL Server 2019, 2022
+       Azure Support   : Yes
+       Edition         : All Editions
    ============================================================= */
+
 
 SET NOCOUNT ON;
 
@@ -85,19 +97,3 @@ SELECT TOP (@TopResults) *
 FROM MissingIndexData
 WHERE improvement_measure >= @MinimumScore
 ORDER BY improvement_measure DESC;
-
--- =============================================================
--- Important Considerations:
--- 1. Missing index DMVs are cleared on:
---      - SQL Server restart
---      - Database detach/attach
---      - Failover events
---
--- 2. Recommendations are based on query optimizer estimates.
---
--- 3. Always validate before creating indexes:
---      - Check for duplicate or overlapping indexes
---      - Evaluate write overhead impact
---      - Validate execution plans
---      - Consider storage and maintenance costs
--- =============================================================
