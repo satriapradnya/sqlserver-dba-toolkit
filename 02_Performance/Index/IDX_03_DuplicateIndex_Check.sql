@@ -2,18 +2,23 @@
    Script Name   : IDX_03_DuplicateIndex_Check.sql
    Category      : Performance Tuning - Index Analysis
    Version       : 1.0
-   Author        : Satria Pradnya 
-   Created       : 14 February 2026 
-   Last Update   : - 
+   Author        : Satria Pradnya
+   Created       : 14 February 2026
+   Last Update   : -
    Description   :
        Detects duplicate or overlapping non-clustered indexes
        based on key column similarity.
+
+   Execution Type : Read-Only
+   Risk Level     : Low
+
    Compatibility :
-    Minimum Version : SQL Server 2017
-    Tested Version  : SQL Server 2019, 2022
-    Azure Support   : Yes
-    Edition         : All Editions
+       Minimum Version : SQL Server 2017
+       Tested Version  : SQL Server 2019, 2022
+       Azure Support   : Yes
+       Edition         : All Editions
    ============================================================= */
+
 
 SET NOCOUNT ON;
 
