@@ -9,6 +9,12 @@
        Detects duplicate or overlapping non-clustered indexes
        based on key column similarity.
 
+       Note:
+           - Comparison is based on key columns only.
+           - Included columns are not evaluated.
+           - Does not consider filtered indexes or index options.
+           - Results require manual validation before removal.
+
    Execution Type : Read-Only
    Risk Level     : Low
 
