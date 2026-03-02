@@ -1,0 +1,46 @@
+-- check ip, disk usage, db size and log --
+USE master
+GO
+
+SELECT SYSDATETIMEOFFSET() DATETIME;
+GO
+
+--Disk Space (SQL Server <2012)--
+SELECT  
+ CONNECTIONPROPERTY('local_net_address') AS IP_Address,
+ Drive=(select distinct volume_mount_point), 
+ Logical_Volume_Name, 
+ cast(total_bytes/1048576/1024 as varchar)+' GB' as Capacity,  
+ cast(available_bytes/1048576/1024 as varchar)+' GB' as "Free Space", 
+ cast(total_bytes/1048576/1024 - available_bytes/1048576/1024 as varchar)+' GB' as "Used Space",
+ cast(convert(decimal(5,2),(((available_bytes/1048576* 1.0)/(total_bytes/1048576* 1.0) *100))) as varchar)+'%' as "% Free",
+ cast(convert(decimal(5,2),(select 100 - (((available_bytes/1048576* 1.0)/(total_bytes/1048576* 1.0) *100)))) as varchar)+'%' as "% Used"  
+ 
+FROM  
+sys.master_files AS f (nolock) CROSS APPLY  
+sys.dm_os_volume_stats(f.database_id, f.file_id)  
+--where volume_mount_point = 'K:\' --not in ('C:\')
+--WHERE cast(convert(decimal(5,2),(select 100 - (((available_bytes/1048576* 1.0)/(total_bytes/1048576* 1.0) *100)))) as varchar) > 90.00
+group by  
+volume_mount_point, logical_volume_name, total_bytes, available_bytes
+order by 2;
+
+
+-- Check Path DB, Log, Size --
+SELECT 
+    CONNECTIONPROPERTY('local_net_address') AS IP_Address,
+    mdf.database_id, 
+    db.name AS database_name,
+    mdf.physical_name AS path_db,
+    ldf.physical_name AS path_log,
+    db_size_GB = CAST((mdf.size * 8.0)/1024 / 1024 AS DECIMAL(18,2)),
+    log_size_MB = CAST((ldf.size * 8.0)/1024 AS DECIMAL(18,2))
+FROM sys.master_files mdf
+JOIN sys.master_files ldf
+    ON mdf.database_id = ldf.database_id AND ldf.type_desc = 'LOG'
+JOIN sys.databases db
+    ON db.database_id = mdf.database_id
+WHERE mdf.type_desc = 'ROWS' 
+--AND db.name in ('')
+--AND mdf.physical_name like 'G:%'
+ORDER BY 3;
